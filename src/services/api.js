@@ -12,3 +12,16 @@ export const fetchPopularShows = async () => {
     throw error;
   }
 };
+
+export const fetchShowDetail = async (showId) => {
+  try {
+    const response = await fetch(`${BASE_URL}/shows/${showId}`);
+    if (!response.ok) {
+      throw new Error('Gagal mengambil detail show');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
