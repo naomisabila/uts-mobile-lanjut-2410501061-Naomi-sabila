@@ -11,12 +11,17 @@ import {
 import { fetchShowDetail } from '../services/api';
 import LoadingIndicator from '../components/LoadingIndicator';
 import ErrorMessage from '../components/ErrorMessage';
+import { useFavorites } from '../store/FavoritesContext';
 
 export default function DetailScreen({ route, navigation }) {
-  const { showId } = route.params; // ambil ID dari params
+  const { showId } = route.params;
   const [show, setShow] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const { favorites, addFavorite, removeFavorite } = useFavorites();
+
+  const isFavorite = favorites.some((item) => item.id === show?.id);
 
   const loadDetail = async () => {
     try {
@@ -34,9 +39,14 @@ export default function DetailScreen({ route, navigation }) {
     loadDetail();
   }, [showId]);
 
-  const handleAddToFavorite = () => {
-    // Untuk sementara hanya alert, nanti disambungin ke state management
-    Alert.alert('Info', 'Fitur favorit akan datang di hari ke-5!');
+  const handleToggleFavorite = () => {
+    if (isFavorite) {
+      removeFavorite(show.id);
+      Alert.alert('Berhasil', 'Dihapus dari favorit');
+    } else {
+      addFavorite(show);
+      Alert.alert('Berhasil', 'Ditambahkan ke favorit!');
+    }
   };
 
   if (loading) {
@@ -48,12 +58,11 @@ export default function DetailScreen({ route, navigation }) {
   }
 
   if (!show) {
-    return null; // safety
+    return null;
   }
 
   return (
     <ScrollView style={styles.container}>
-      {/* Poster */}
       <Image
         source={{
           uri: show.image?.original || 'https://via.placeholder.com/300x450?text=No+Image',
@@ -62,31 +71,25 @@ export default function DetailScreen({ route, navigation }) {
         resizeMode="contain"
       />
 
-      {/* Nama Show */}
       <Text style={styles.title}>{show.name}</Text>
 
-      {/* Rating */}
       <Text style={styles.info}>
         ⭐ Rating: {show.rating?.average || 'N/A'} / 10
       </Text>
 
-      {/* Genre */}
       <Text style={styles.info}>
         🎭 Genre: {show.genres?.join(', ') || 'Tidak diketahui'}
       </Text>
 
-      {/* Jadwal Tayang */}
       <Text style={styles.info}>
         📅 Schedule:{' '}
         {show.schedule?.days?.join(', ') || '-'} pukul {show.schedule?.time || '??:??'}
       </Text>
 
-      {/* Status */}
       <Text style={styles.info}>
         📌 Status: {show.status || '-'}
       </Text>
 
-      {/* Ringkasan */}
       <View style={styles.summaryContainer}>
         <Text style={styles.sectionTitle}>Ringkasan:</Text>
         <Text style={styles.summary}>
@@ -94,9 +97,13 @@ export default function DetailScreen({ route, navigation }) {
         </Text>
       </View>
 
-      {/* Tombol Tambah ke Favorit */}
-      <TouchableOpacity style={styles.favoriteButton} onPress={handleAddToFavorite}>
-        <Text style={styles.favoriteButtonText}>❤️ Tambah ke Favorit</Text>
+      <TouchableOpacity
+        style={[styles.favoriteButton, isFavorite && styles.favoriteButtonActive]}
+        onPress={handleToggleFavorite}
+      >
+        <Text style={styles.favoriteButtonText}>
+          {isFavorite ? '❤️ Hapus dari Favorit' : '🤍 Tambah ke Favorit'}
+        </Text>
       </TouchableOpacity>
 
       <View style={{ height: 40 }} />
@@ -151,6 +158,9 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginHorizontal: 20,
     elevation: 3,
+  },
+  favoriteButtonActive: {
+    backgroundColor: '#aaa',
   },
   favoriteButtonText: {
     color: 'white',
