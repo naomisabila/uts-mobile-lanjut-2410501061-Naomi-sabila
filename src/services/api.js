@@ -25,3 +25,16 @@ export const fetchShowDetail = async (showId) => {
     throw error;
   }
 };
+
+export const fetchSearchShows = async (keyword) => {
+  try {
+    const response = await fetch(`${BASE_URL}/search/shows?q=${keyword}`);
+    if (!response.ok) {
+      throw new Error('Pencarian gagal');
+    }
+    const data = await response.json();
+    return data.map(item => item.show);
+  } catch (error) {
+    throw error;
+  }
+};
