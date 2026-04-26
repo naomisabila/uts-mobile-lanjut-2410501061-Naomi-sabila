@@ -9,9 +9,9 @@ export default function AboutScreen() {
           source={require('../../assets/images/avatar.png')}
           style={styles.avatar}
         />
-        <Text style={styles.name}>Nama Mahasiswa</Text>
-        <Text style={styles.nim}>NIM: 1234567890</Text>
-        <Text style={styles.kelas}>Kelas: D3 Sistem Informasi 4A</Text>
+        <Text style={styles.name}>Naomi Sabila Imani</Text>
+        <Text style={styles.nim}>NIM: 2410501061</Text>
+        <Text style={styles.kelas}>Kelas: D3 Sistem Informasi A</Text>
         <Text style={styles.tema}>Tema: MovieDex (Tema B)</Text>
         <Text style={styles.credit}>API: TVMaze (https://api.tvmaze.com)</Text>
       </View>
